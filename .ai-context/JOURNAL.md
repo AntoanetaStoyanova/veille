@@ -30,14 +30,16 @@
 - Plan veille-quotidienne — Étape 5 : Résumé (`bin/summarize.py` : `DigestItem`, `Digest(headline, others)`, `summarize(articles, client)` ; `bin/llm.py` : `ask_json` extrait de `scoring.py` ; `tests/helpers.py` : `make_client` partagé ; `tests/test_summarize.py`). `summarize` prend les articles dans l'ordre de `select_top` (le premier est « à la une ») ; item ou bloc absent → `ValueError`.
 - Plan veille-quotidienne — Étape 6 : Mail (`bin/mail.py` : `render(digest, themes, day)`, `send`, `MailSettings`, `load_mail_settings(env)` ; `SMTP_HOST`/`SMTP_PORT` dans `config/settings.py` ; `tests/test_mail.py`). Variable manquante → `ValueError` qui nomme les variables ; le texte brut met les titres de section en majuscules.
 - Plan veille-quotidienne — Étape 7 : Orchestration et CLI (`bin/pipeline.py` : `run(dry_run, *, client, parse, mailer, seen_path, today)` et `main(argv)` avec `--dry-run` ; `SEEN_PATH` dans `config/settings.py` ; tâches `inv run` / `inv dry-run` ; `tests/test_pipeline.py`). Les secrets du mail sont lus avant les appels Claude ; `seen.json` reçoit les URL normalisées des items envoyés, après l'envoi seulement ; en dry-run le mail est journalisé (pas de `print`), et `setup_logging` écrit tout de même un fichier dans `logs/` (ignoré par git).
+- Plan veille-quotidienne — Étape 8 (partielle) : `.github/workflows/veille.yml`, section « Mise en production » du `README.md`, `send_failure` dans `bin/mail.py` (mail d'erreur appelé par le step `if: failure()`), `tests/test_workflow.py`. Le workflow n'a pas pu être exécuté ici : il reste à valider sur GitHub.
 
 ### Reste à faire
 
-- Exécuter `docs/plans/veille-quotidienne.md` — Étape 8 : Workflow, cron et documentation.
-- Avant l'étape 8 : créer la clé API Anthropic, le mot de passe d'application Gmail et le PAT fine-grained.
+- Exécuter `docs/plans/veille-quotidienne.md` — Étape 8 : tâche manuelle restante, merge `develop` → `main` (Antoaneta), puis déclenchement manuel du workflow pour validation.
+- Avant le déclenchement : créer la clé API Anthropic, le mot de passe d'application Gmail, les 4 secrets du dépôt et le PAT fine-grained (voir README).
+- Ensuite : cocher les « Critères de fin » du plan et de la spec, passer leur `statut` à `fait`.
 
 ### Références
 
 - [Spec](../docs/specs/veille-quotidienne.md)
 - [Plan](../docs/plans/veille-quotidienne.md)
-- `src/veille/config/`, `src/veille/log/__init__.py`, `src/veille/bin/collect.py`, `src/veille/bin/prefilter.py`, `src/veille/bin/scoring.py`, `src/veille/bin/summarize.py`, `src/veille/bin/mail.py`, `src/veille/bin/llm.py`, `src/veille/bin/pipeline.py`, `tests/test_pipeline.py`, `src/veille/data/seen.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`, `tests/test_collect.py`
+- `src/veille/config/`, `src/veille/log/__init__.py`, `src/veille/bin/collect.py`, `src/veille/bin/prefilter.py`, `src/veille/bin/scoring.py`, `src/veille/bin/summarize.py`, `src/veille/bin/mail.py`, `src/veille/bin/llm.py`, `src/veille/bin/pipeline.py`, `tests/test_pipeline.py`, `src/veille/data/seen.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`, `tests/test_collect.py`, `.github/workflows/veille.yml`, `tests/test_workflow.py`, `README.md`

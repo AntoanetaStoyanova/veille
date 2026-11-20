@@ -171,3 +171,22 @@ def send(subject: str, html: str, text: str, settings: MailSettings) -> None:
     with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as smtp:
         smtp.login(settings.address, settings.password)
         smtp.send_message(message)
+
+
+def send_failure(run_url: str, settings: MailSettings) -> None:
+    """
+    Prévient par mail qu'une exécution du workflow a échoué.
+
+    Parameters
+    ----------
+    run_url : str
+        Lien vers l'exécution GitHub Actions.
+    settings : MailSettings
+        Identifiants et destinataire.
+    """
+    text = f"Le workflow de veille a échoué.\nLogs : {run_url}\n"
+    html = (
+        "<p>Le workflow de veille a échoué.</p>"
+        f'<p><a href="{escape(run_url)}">Voir les logs</a></p>'
+    )
+    send("Veille : échec du workflow", html, text, settings)

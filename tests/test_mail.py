@@ -99,6 +99,21 @@ def test_send_se_connecte_et_envoie_un_mail_texte_et_html(
     assert "<p>html</p>" in message.get_body(("html",)).get_content()
 
 
+def test_send_failure_envoie_le_lien_de_l_execution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_send = MagicMock()
+    monkeypatch.setattr(mail, "send", fake_send)
+
+    mail.send_failure("https://github.com/x/y/actions/runs/1?a=1&b=2", SETTINGS)
+
+    subject, html, text, settings = fake_send.call_args.args
+    assert "échec" in subject
+    assert "Logs : https://github.com/x/y/actions/runs/1?a=1&b=2" in text
+    assert 'href="https://github.com/x/y/actions/runs/1?a=1&amp;b=2"' in html
+    assert settings is SETTINGS
+
+
 def test_load_mail_settings_lit_les_trois_variables() -> None:
     env = {
         "GMAIL_ADDRESS": "moi@gmail.com",

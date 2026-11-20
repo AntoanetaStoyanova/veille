@@ -63,10 +63,10 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 8 — Workflow, cron et documentation
 
-- [ ] `.github/workflows/veille.yml` : déclencheur `workflow_dispatch` seul, `permissions: contents: write`, groupe de concurrence, `astral-sh/setup-uv`, `uv sync`, exécution du pipeline avec les secrets, commit de `seen.json` seulement s'il a changé, step `if: failure()` qui envoie un mail d'erreur court.
-- [ ] README : variables d'environnement, création du mot de passe d'application Gmail, des secrets GitHub, du PAT fine-grained (dépôt unique, *Actions: Read and write*, expiration, rappel de renouvellement) et du job cron-job.org (`POST .../actions/workflows/veille.yml/dispatches`, body `{"ref":"main"}`, attente HTTP 204, notification d'échec activée).
+- [x] `.github/workflows/veille.yml` : déclencheur `workflow_dispatch` seul, `permissions: contents: write`, groupe de concurrence, `astral-sh/setup-uv`, `uv sync`, exécution du pipeline avec les secrets, commit de `seen.json` seulement s'il a changé, step `if: failure()` qui envoie un mail d'erreur court.
+- [x] README : variables d'environnement, création du mot de passe d'application Gmail, des secrets GitHub, du PAT fine-grained (dépôt unique, *Actions: Read and write*, expiration, rappel de renouvellement) et du job cron-job.org (`POST .../actions/workflows/veille.yml/dispatches`, body `{"ref":"main"}`, attente HTTP 204, notification d'échec activée).
 - [ ] Merge `develop` → `main` (action manuelle d'Antoaneta), puis déclenchement manuel du workflow pour validation.
-- [ ] Tests : validité YAML du workflow (chargement `yaml.safe_load`, présence de `workflow_dispatch` et absence de `schedule`).
+- [x] Tests : validité YAML du workflow (chargement `yaml.safe_load`, présence de `workflow_dispatch` et absence de `schedule`).
 
 ## Critères de fin
 

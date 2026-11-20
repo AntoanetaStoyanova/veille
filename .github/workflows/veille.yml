@@ -1,0 +1,52 @@
+name: veille
+
+# Déclenché uniquement par cron-job.org (API workflow_dispatch), jamais par `schedule:`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: veille
+  cancel-in-progress: false
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+  GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+  MAIL_TO: ${{ secrets.MAIL_TO }}
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Installer les dépendances
+        run: uv sync --frozen --no-dev
+
+      - name: Lancer la veille
+        run: uv run python -m veille
+
+      - name: Commiter l'historique s'il a changé
+        run: |
+          git config user.name "veille-bot"
+          git config user.email "veille-bot@users.noreply.github.com"
+          git add src/veille/data/seen.json
+          git diff --cached --quiet || {
+            git commit -m "chore: historique des articles envoyés"
+            git push
+          }
+
+      - name: Prévenir par mail de l'échec
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: >
+          uv run python -c "import os;
+          from veille.bin.mail import load_mail_settings, send_failure;
+          send_failure(os.environ['RUN_URL'], load_mail_settings())"
