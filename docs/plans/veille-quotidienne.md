@@ -51,8 +51,8 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 6 — Mail
 
-- [ ] `src/veille/bin/mail.py` : `render(digest, date)` → (sujet `Veille du JJ/MM — N items`, HTML, texte brut) avec « À la une » puis sections thématiques, sections vides omises ; `send(subject, html, text, settings)` via `smtplib.SMTP_SSL` (secrets lus dans l'environnement).
-- [ ] Tests : sujet et nombre d'items, section vide omise, échappement HTML du contenu, `send` avec `smtplib` mocké, variable d'environnement manquante → erreur claire.
+- [x] `src/veille/bin/mail.py` : `render(digest, date)` → (sujet `Veille du JJ/MM — N items`, HTML, texte brut) avec « À la une » puis sections thématiques, sections vides omises ; `send(subject, html, text, settings)` via `smtplib.SMTP_SSL` (secrets lus dans l'environnement).
+- [x] Tests : sujet et nombre d'items, section vide omise, échappement HTML du contenu, `send` avec `smtplib` mocké, variable d'environnement manquante → erreur claire.
 
 ## Étape 7 — Orchestration et CLI
 
