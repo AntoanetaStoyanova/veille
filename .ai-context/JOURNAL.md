@@ -24,14 +24,15 @@
 - Plan veille-quotidienne — Étape 1 : Fondations (dépendances, `__init__.py` avec beartype, `__main__.py`, `.gitignore`, `log/__init__.py`, `config/{__init__,settings}.py` + `sources.yml`, `bin/pipeline.py` provisoire, tests config et log).
 - `pyproject.toml` : `packages.find` corrigé (`where=["src"]`, `include=["veille*"]`) + package-data `sources.yml`, car le paquet s'installait sous le nom `src` ; `cruft update` peut signaler un conflit sur ce bloc.
 - URLs des flux de `sources.yml` non vérifiées (pas de réseau en test) : un flux cassé est ignoré à la collecte.
+- Plan veille-quotidienne — Étape 2 : Collecte (`bin/collect.py` : `Article`, `fetch_articles(themes, now, parse)` ; `tests/test_collect.py`). Article sans date ou sans lien ignoré ; flux illisible = `bozo` sans entrée.
 
 ### Reste à faire
 
-- Exécuter `docs/plans/veille-quotidienne.md` — Étape 2 : Collecte (`bin/pipeline.py` n'est qu'un `main()` provisoire, remplacé à l'étape 7).
+- Exécuter `docs/plans/veille-quotidienne.md` — Étape 3 : Historique et pré-filtre (`bin/pipeline.py` n'est qu'un `main()` provisoire, remplacé à l'étape 7).
 - Avant l'étape 8 : créer la clé API Anthropic, le mot de passe d'application Gmail et le PAT fine-grained.
 
 ### Références
 
 - [Spec](../docs/specs/veille-quotidienne.md)
 - [Plan](../docs/plans/veille-quotidienne.md)
-- `src/veille/config/`, `src/veille/log/__init__.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`
+- `src/veille/config/`, `src/veille/log/__init__.py`, `src/veille/bin/collect.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`, `tests/test_collect.py`

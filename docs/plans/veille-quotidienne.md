@@ -29,8 +29,8 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 2 — Collecte
 
-- [ ] `src/veille/bin/collect.py` : dataclass `Article` (titre, url, source, thème, date, extrait) ; `fetch_articles(sources)` parse chaque flux avec `feedparser`, ignore un flux en erreur (log d'avertissement), filtre sur la fenêtre de fraîcheur.
-- [ ] Tests : parsing d'un flux RSS et d'un Atom fournis en chaînes (sans réseau), article hors fenêtre exclu, flux cassé ignoré sans interrompre les autres.
+- [x] `src/veille/bin/collect.py` : dataclass `Article` (titre, url, source, thème, date, extrait) ; `fetch_articles(sources)` parse chaque flux avec `feedparser`, ignore un flux en erreur (log d'avertissement), filtre sur la fenêtre de fraîcheur.
+- [x] Tests : parsing d'un flux RSS et d'un Atom fournis en chaînes (sans réseau), article hors fenêtre exclu, flux cassé ignoré sans interrompre les autres.
 
 ## Étape 3 — Historique et pré-filtre
 
