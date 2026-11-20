@@ -4,15 +4,24 @@ version = "0.1.0"
 description = "Un pipeline Python déclenché chaque matin via cron-job.org et GitHub Actions, qui collecte des articles sur l'IA, dbt et Python, les résume et les explique en français avec Claude, puis les envoie dans un seul mail."
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "anthropic>=2.11.0",
+    "beartype>=0.23.1",
+    "cruft>=2.16.0",
+    "feedparser>=6.0.14",
+    "pyyaml>=6.0.3",
+]
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["src*"]
+where = ["src"]
+include = ["veille*"]
+
+[tool.setuptools.package-data]
+veille = ["config/sources.yml"]
 
 [tool.ruff]
 target-version = "py313"
@@ -23,6 +32,9 @@ indent-width = 4
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "C4", "UP"]
 ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tasks/__init__.py" = ["F403"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -60,6 +72,35 @@ ignore_missing_imports = true
 strict = true
 exclude = ["tasks/", "docs/"]
 
+[tool.commitizen]
+# cz_customize : seul moyen de changer le parseur du changelog ; tous les types y vont,
+# seuls feat, fix, refactor et perf changent la version.
+name = "cz_customize"
+version_provider = "uv"
+tag_format = "v$version"
+annotated_tag = true
+major_version_zero = true
+update_changelog_on_bump = true
+changelog_file = "CHANGELOG.md"
+version_files = ["src/veille/__init__.py:__version__"]
+
+[tool.commitizen.customize]
+schema = "<type>(<portée>)!: <description>"
+example = "feat: snapshots Parquet du catalogue"
+schema_pattern = '^(bump|feat|fix|refactor|perf|docs|test|chore)(\([^()\r\n]+\))?!?: \S.*'
+commit_parser = '^((?P<change_type>feat|fix|refactor|perf|docs|test|chore)(?:\((?P<scope>[^()\r\n]*)\))?(?P<breaking>!)?):\s(?P<message>.*)?'
+changelog_pattern = '^(feat|fix|refactor|perf|docs|test|chore)(\(.+\))?!?:'
+change_type_order = ["Nouveautés", "Corrections", "Réécritures", "Performances", "Documentation", "Tests", "Maintenance"]
+
+[tool.commitizen.customize.change_type_map]
+feat = "Nouveautés"
+fix = "Corrections"
+refactor = "Réécritures"
+perf = "Performances"
+docs = "Documentation"
+test = "Tests"
+chore = "Maintenance"
+
 [dependency-groups]
 dev = [
     "invoke>=2.2.0",
@@ -69,4 +110,8 @@ dev = [
     "pytest-cov>=6.0.0",
     "sphinx>=7.0.0",
     "furo>=2024.1.0",
+    "types-pyyaml>=6.0.12.20261113",
+    "pre-commit>=4.7.0",
+    "okflint==0.5.1",
+    "commitizen>=4.19.3",
 ]

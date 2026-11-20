@@ -1,0 +1,45 @@
+themes:
+  ia:
+    label: IA
+    keywords: [llm, gpt, claude, gemini, openai, anthropic, deepmind, transformer, model, agent, benchmark]
+    feeds:
+      - name: OpenAI News
+        url: https://openai.com/news/rss.xml
+      - name: Google DeepMind
+        url: https://deepmind.google/blog/rss.xml
+      - name: Hugging Face Blog
+        url: https://huggingface.co/blog/feed.xml
+      - name: arXiv cs.AI
+        url: https://rss.arxiv.org/rss/cs.AI
+      - name: Hacker News (LLM)
+        url: https://hnrss.org/newest?q=LLM&points=100
+      - name: Anthropic SDK Python
+        url: https://github.com/anthropics/anthropic-sdk-python/releases.atom
+  automatisation-ia:
+    label: Automatisation IA
+    keywords: [agent, agents, automation, workflow, mcp, tool use, orchestration, langchain, claude code, n8n]
+    feeds:
+      - name: Simon Willison
+        url: https://simonwillison.net/atom/everything/
+      - name: LangChain releases
+        url: https://github.com/langchain-ai/langchain/releases.atom
+      - name: Hacker News (AI agents)
+        url: https://hnrss.org/newest?q=AI+agents&points=50
+  dbt:
+    label: dbt
+    keywords: [dbt, analytics engineering, semantic layer, data modeling, warehouse, sql]
+    feeds:
+      - name: dbt Developer Blog
+        url: https://docs.getdbt.com/blog/rss.xml
+      - name: dbt-core releases
+        url: https://github.com/dbt-labs/dbt-core/releases.atom
+  python:
+    label: Python
+    keywords: [python, uv, ruff, mypy, pytest, pydantic, packaging, asyncio]
+    feeds:
+      - name: Real Python
+        url: https://realpython.com/atom.xml
+      - name: uv releases
+        url: https://github.com/astral-sh/uv/releases.atom
+      - name: Ruff releases
+        url: https://github.com/astral-sh/ruff/releases.atom
