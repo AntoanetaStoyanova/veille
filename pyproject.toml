@@ -5,7 +5,6 @@ description = "Un pipeline Python déclenché chaque matin via cron-job.org et G
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "anthropic>=2.11.0",
     "beartype>=0.23.1",
     "cruft>=2.16.0",
     "feedparser>=6.0.14",

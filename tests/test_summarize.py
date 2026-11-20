@@ -1,9 +1,8 @@
-import json
 from datetime import UTC, datetime
 
 import pytest
 
-from tests.helpers import make_client
+from tests.helpers import make_llm
 from veille.bin.collect import Article
 from veille.bin.summarize import summarize
 from veille.config.settings import MODEL_SUMMARY
@@ -30,9 +29,9 @@ def _entry(n: int) -> dict[str, str]:
 
 def test_summarize_remplit_les_trois_blocs_de_chaque_item() -> None:
     reply = {f"https://a.com/{n}": _entry(n) for n in (1, 2, 3)}
-    client = make_client(json.dumps(reply))
+    llm = make_llm(reply)
 
-    digest = summarize([_article(1), _article(2), _article(3)], client)
+    digest = summarize([_article(1), _article(2), _article(3)], llm)
 
     assert digest.headline.article.url == "https://a.com/1"
     assert [i.article.url for i in digest.others] == [
@@ -45,35 +44,29 @@ def test_summarize_remplit_les_trois_blocs_de_chaque_item() -> None:
         assert item.explained_simply == f"image {n}"
 
 
-def test_summarize_envoie_un_seul_appel_a_sonnet_avec_tous_les_articles() -> None:
+def test_summarize_envoie_un_seul_appel_au_modele_avec_tous_les_articles() -> None:
     reply = {f"https://a.com/{n}": _entry(n) for n in (1, 2)}
-    client = make_client(json.dumps(reply))
+    llm = make_llm(reply)
 
-    summarize([_article(1), _article(2)], client)
+    summarize([_article(1), _article(2)], llm)
 
-    client.messages.create.assert_called_once()
-    kwargs = client.messages.create.call_args.kwargs
-    prompt = kwargs["messages"][0]["content"]
-    assert kwargs["model"] == MODEL_SUMMARY
+    llm.assert_called_once()
+    model, prompt = llm.call_args.args
+    assert model == MODEL_SUMMARY
     assert "Titre 1" in prompt and "Titre 2" in prompt
 
 
 def test_summarize_item_manquant_leve_une_erreur() -> None:
-    client = make_client(json.dumps({"https://a.com/1": _entry(1)}))
+    llm = make_llm({"https://a.com/1": _entry(1)})
 
     with pytest.raises(ValueError, match="a.com/2"):
-        summarize([_article(1), _article(2)], client)
+        summarize([_article(1), _article(2)], llm)
 
 
 @pytest.mark.parametrize("missing", ["ce_qui_se_passe", "explique_simplement"])
 def test_summarize_bloc_absent_ou_vide_leve_une_erreur(missing: str) -> None:
     for broken in ({**_entry(1), missing: "  "}, {**_entry(1)} | {missing: None}):
-        client = make_client(json.dumps({"https://a.com/1": broken}))
+        llm = make_llm({"https://a.com/1": broken})
 
         with pytest.raises(ValueError, match="incomplet"):
-            summarize([_article(1)], client)
-
-
-def test_summarize_reponse_non_json_leve_une_erreur() -> None:
-    with pytest.raises(ValueError, match="JSON"):
-        summarize([_article(1)], make_client("pas du json"))
+            summarize([_article(1)], llm)

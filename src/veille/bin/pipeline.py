@@ -6,10 +6,10 @@ from collections.abc import Callable, Sequence
 from datetime import date
 from pathlib import Path
 
-import anthropic
 import feedparser
 
 from veille.bin.collect import Parser, fetch_articles
+from veille.bin.llm import LLM, ask_json
 from veille.bin.mail import MailSettings, load_mail_settings, render, send
 from veille.bin.prefilter import normalize_url, prefilter
 from veille.bin.scoring import score_articles, select_top
@@ -27,7 +27,7 @@ Mailer = Callable[[str, str, str, MailSettings], None]
 def run(
     dry_run: bool = False,
     *,
-    client: anthropic.Anthropic | None = None,
+    llm: LLM = ask_json,
     parse: Parser = feedparser.parse,
     mailer: Mailer = send,
     seen_path: Path = SEEN_PATH,
@@ -42,8 +42,8 @@ def run(
     ----------
     dry_run : bool
         Si vrai, journalise le mail sans l'envoyer ni écrire l'historique.
-    client : anthropic.Anthropic | None
-        Client Anthropic ; créé depuis `ANTHROPIC_API_KEY` si absent.
+    llm : LLM
+        Fonction d'appel au modèle (`veille.bin.llm.ask_json` par défaut).
     parse : Parser
         Lecteur de flux (`feedparser.parse` par défaut).
     mailer : Mailer
@@ -70,9 +70,8 @@ def run(
         logger.info("Aucun nouvel article : pas de mail envoyé")
         return
 
-    client = client or anthropic.Anthropic()
-    top = select_top(score_articles(candidates, client))
-    digest = summarize([s.article for s in top], client)
+    top = select_top(score_articles(candidates, llm))
+    digest = summarize([s.article for s in top], llm)
     subject, html, text = render(digest, themes, today)
 
     if settings is None:

@@ -3,13 +3,10 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-import anthropic
-
 from veille.bin.collect import Article
-from veille.bin.llm import ask_json
+from veille.bin.llm import LLM
 from veille.config.settings import MODEL_SUMMARY
 
-SUMMARY_MAX_TOKENS = 8000
 BLOCKS = ("ce_qui_se_passe", "pourquoi_important", "explique_simplement")
 
 
@@ -75,7 +72,7 @@ def _build_prompt(articles: Sequence[Article]) -> str:
     )
 
 
-def summarize(articles: Sequence[Article], client: anthropic.Anthropic) -> Digest:
+def summarize(articles: Sequence[Article], llm: LLM) -> Digest:
     """
     Résume tous les articles en un seul appel à Sonnet.
 
@@ -83,8 +80,8 @@ def summarize(articles: Sequence[Article], client: anthropic.Anthropic) -> Diges
     ----------
     articles : Sequence[Article]
         Articles retenus, non vide ; le premier est l'item « à la une ».
-    client : anthropic.Anthropic
-        Client de l'API Anthropic.
+    llm : LLM
+        Fonction d'appel au modèle (`veille.bin.llm.ask_json` en production).
 
     Returns
     -------
@@ -96,7 +93,7 @@ def summarize(articles: Sequence[Article], client: anthropic.Anthropic) -> Diges
     ValueError
         Si la réponse n'est pas un JSON ou s'il manque un article ou un bloc.
     """
-    data = ask_json(client, MODEL_SUMMARY, SUMMARY_MAX_TOKENS, _build_prompt(articles))
+    data = llm(MODEL_SUMMARY, _build_prompt(articles))
 
     items = []
     for article in articles:

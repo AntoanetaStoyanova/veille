@@ -1,9 +1,8 @@
-import json
 from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from tests.helpers import make_client
+from tests.helpers import make_llm
 from veille.bin.collect import Article
 from veille.bin.scoring import ScoredArticle, score_articles, select_top
 from veille.config.settings import MODEL_SCORING
@@ -24,9 +23,9 @@ def _article(n: int, age_hours: int = 0) -> Article:
 
 def test_score_articles_associe_chaque_note_a_son_article() -> None:
     articles = [_article(1), _article(2)]
-    client = make_client(json.dumps({"https://a.com/1": 4, "https://a.com/2": 2}))
+    llm = make_llm({"https://a.com/1": 4, "https://a.com/2": 2})
 
-    scored = score_articles(articles, client)
+    scored = score_articles(articles, llm)
 
     assert [(s.article.url, s.score) for s in scored] == [
         ("https://a.com/1", 4),
@@ -35,47 +34,36 @@ def test_score_articles_associe_chaque_note_a_son_article() -> None:
 
 
 def test_score_articles_envoie_un_seul_appel_avec_tous_les_articles() -> None:
-    client = make_client(json.dumps({"https://a.com/1": 3, "https://a.com/2": 3}))
+    llm = make_llm({"https://a.com/1": 3, "https://a.com/2": 3})
 
-    score_articles([_article(1), _article(2)], client)
+    score_articles([_article(1), _article(2)], llm)
 
-    client.messages.create.assert_called_once()
-    kwargs = client.messages.create.call_args.kwargs
-    prompt = kwargs["messages"][0]["content"]
-    assert kwargs["model"] == MODEL_SCORING
+    llm.assert_called_once()
+    model, prompt = llm.call_args.args
+    assert model == MODEL_SCORING
     assert "https://a.com/1" in prompt and "https://a.com/2" in prompt
 
 
-def test_score_articles_sans_candidat_n_appelle_pas_l_api() -> None:
-    client = make_client("{}")
+def test_score_articles_sans_candidat_n_appelle_pas_le_modele() -> None:
+    llm = make_llm({})
 
-    assert score_articles([], client) == []
-    client.messages.create.assert_not_called()
-
-
-def test_score_articles_json_invalide_leve_une_erreur() -> None:
-    with pytest.raises(ValueError, match="JSON"):
-        score_articles([_article(1)], make_client("voici mes notes : 4"))
-
-
-def test_score_articles_reponse_non_objet_leve_une_erreur() -> None:
-    with pytest.raises(ValueError, match="inattendue"):
-        score_articles([_article(1)], make_client("[4]"))
+    assert score_articles([], llm) == []
+    llm.assert_not_called()
 
 
 def test_score_articles_url_absente_leve_une_erreur() -> None:
-    client = make_client(json.dumps({"https://a.com/1": 4}))
+    llm = make_llm({"https://a.com/1": 4})
 
     with pytest.raises(ValueError, match="a.com/2"):
-        score_articles([_article(1), _article(2)], client)
+        score_articles([_article(1), _article(2)], llm)
 
 
 @pytest.mark.parametrize("note", [0, 6, 3.5, "4", True])
 def test_score_articles_note_invalide_leve_une_erreur(note: object) -> None:
-    client = make_client(json.dumps({"https://a.com/1": note}))
+    llm = make_llm({"https://a.com/1": note})
 
     with pytest.raises(ValueError, match="invalide"):
-        score_articles([_article(1)], client)
+        score_articles([_article(1)], llm)
 
 
 def test_select_top_trie_par_note_et_garde_n_articles() -> None:
