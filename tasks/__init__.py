@@ -8,13 +8,10 @@ import tempfile
 from datetime import date
 from pathlib import Path, PurePosixPath
 
-<<<<<<< ours
-=======
 from invoke import Context, Exit, task
 
 from .projet import *
 
->>>>>>> theirs
 # ---------------------------------------------------------------------------
 # Qualité du code
 # ---------------------------------------------------------------------------
@@ -58,23 +55,6 @@ def test(c: Context) -> None:
 @task(pre=[check, test])  # type: ignore[misc]
 def ci(c: Context) -> None:
     """Lance la suite complète CI : lint, typecheck, tests."""
-
-
-# ---------------------------------------------------------------------------
-# Pipeline
-# ---------------------------------------------------------------------------
-
-
-@task
-def run(c: Context) -> None:
-    """Lance la veille : envoie le mail et met à jour l'historique."""
-    c.run("uv run python -m veille")
-
-
-@task
-def dry_run(c: Context) -> None:
-    """Affiche le mail du jour sans l'envoyer ni modifier l'historique."""
-    c.run("uv run python -m veille --dry-run")
 
 
 # ---------------------------------------------------------------------------

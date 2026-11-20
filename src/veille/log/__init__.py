@@ -7,7 +7,6 @@ from pathlib import Path
 
 
 def setup_logging(
-<<<<<<< ours
     project_name: str,
     log_dir: Path = Path("logs"),
     level: int = logging.INFO,
@@ -33,10 +32,6 @@ def setup_logging(
     if logger.handlers:
         return logger
 
-=======
-    project_name: str, log_dir: Path = Path("logs"), level: int = logging.INFO
-) -> logging.Logger:
->>>>>>> theirs
     log_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

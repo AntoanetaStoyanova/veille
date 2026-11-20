@@ -14,5 +14,8 @@
       "_commit": "da0ce4691c777dc8cb75f0c3ecc55460c97124e1"
     }
   },
-  "directory": null
+  "directory": null,
+  "skip": [
+    "tasks/projet.py"
+  ]
 }
