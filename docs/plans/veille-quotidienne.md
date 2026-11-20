@@ -34,9 +34,9 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 3 — Historique et pré-filtre
 
-- [ ] `src/veille/data/seen.py` : `load_seen(path)`, `save_seen(path, seen)` (écriture atomique), `prune(seen, today)` (90 jours).
-- [ ] `src/veille/bin/prefilter.py` : `drop_seen()`, dédoublonnage par URL normalisée au sein du lot, `keyword_filter()` par thème, plafond de 40 candidats (les plus récents).
-- [ ] Tests : fichier absent → historique vide, URL déjà vue exclue, doublon intra-lot supprimé, purge à 90 jours, plafond respecté.
+- [x] `src/veille/data/seen.py` : `load_seen(path)`, `save_seen(path, seen)` (écriture atomique), `prune(seen, today)` (90 jours).
+- [x] `src/veille/bin/prefilter.py` : `drop_seen()`, dédoublonnage par URL normalisée au sein du lot, `keyword_filter()` par thème, plafond de 40 candidats (les plus récents).
+- [x] Tests : fichier absent → historique vide, URL déjà vue exclue, doublon intra-lot supprimé, purge à 90 jours, plafond respecté.
 
 ## Étape 4 — Notation LLM
 
