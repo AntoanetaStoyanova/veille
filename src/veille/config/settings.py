@@ -5,6 +5,7 @@ from pathlib import Path
 PROJECT_NAME = "veille"
 
 SOURCES_PATH = Path(__file__).parent / "sources.yml"
+SEEN_PATH = Path(__file__).parents[1] / "data" / "seen.json"
 
 MODEL_SCORING = "claude-haiku-5-5"
 MODEL_SUMMARY = "claude-sonnet-5-5"

@@ -56,10 +56,10 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 7 — Orchestration et CLI
 
-- [ ] `src/veille/bin/pipeline.py` : `run(dry_run: bool)` enchaîne collecte → filtre → tri → résumé → rendu ; envoie puis met à jour `seen.json` (jamais avant l'envoi) ; si aucun article, ne pas envoyer de mail vide (log).
-- [ ] `main()` : option `--dry-run` (affiche le mail, aucun envoi, aucune écriture).
-- [ ] `tasks/__init__.py` : tâche `run` (`uv run python -m veille`) et `dry_run`.
-- [ ] Tests : pipeline complet avec toutes les dépendances factices, échec d'envoi → `seen.json` inchangé, `--dry-run` n'écrit rien, zéro article → pas de mail.
+- [x] `src/veille/bin/pipeline.py` : `run(dry_run: bool)` enchaîne collecte → filtre → tri → résumé → rendu ; envoie puis met à jour `seen.json` (jamais avant l'envoi) ; si aucun article, ne pas envoyer de mail vide (log).
+- [x] `main()` : option `--dry-run` (affiche le mail, aucun envoi, aucune écriture).
+- [x] `tasks/__init__.py` : tâche `run` (`uv run python -m veille`) et `dry_run`.
+- [x] Tests : pipeline complet avec toutes les dépendances factices, échec d'envoi → `seen.json` inchangé, `--dry-run` n'écrit rien, zéro article → pas de mail.
 
 ## Étape 8 — Workflow, cron et documentation
 
