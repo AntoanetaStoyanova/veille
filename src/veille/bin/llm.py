@@ -10,6 +10,15 @@ LLM = Callable[[str, str], dict[str, Any]]
 TIMEOUT_S = 600
 
 
+def _error_detail(stdout: str) -> str:
+    """Raison d'échec lue dans l'enveloppe JSON de la CLI, sinon la sortie brute."""
+    try:
+        result = json.loads(stdout)["result"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return stdout.strip()
+    return str(result)
+
+
 def ask_json(model: str, prompt: str) -> dict[str, Any]:
     """
     Envoie un prompt à la CLI Claude et décode la réponse comme un objet JSON.
@@ -45,7 +54,7 @@ def ask_json(model: str, prompt: str) -> dict[str, Any]:
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(f"CLI `claude` sans réponse après {TIMEOUT_S} s") from exc
     if proc.returncode != 0:
-        detail = proc.stderr.strip() or proc.stdout.strip()
+        detail = proc.stderr.strip() or _error_detail(proc.stdout)
         raise RuntimeError(f"CLI `claude` en échec : {detail[:200]!r}")
 
     try:
