@@ -33,12 +33,12 @@ Les sources et les mots-clés se règlent dans `src/veille/config/sources.yml`.
 
 | Variable | Rôle |
 |----------|------|
-| `ANTHROPIC_API_KEY` | Clé API Anthropic (tri et résumé) |
+| `CLAUDE_CODE_OAUTH_TOKEN` | Jeton d'abonnement Claude (tri et résumé), généré avec `claude setup-token` |
 | `GMAIL_ADDRESS` | Adresse Gmail d'envoi |
 | `GMAIL_APP_PASSWORD` | Mot de passe d'application Gmail |
 | `MAIL_TO` | Destinataire du mail |
 
-En local, `dry-run` n'a besoin que de `ANTHROPIC_API_KEY`.
+En local, `dry-run` n'a besoin que de la CLI `claude` connectée à l'abonnement (`claude` puis `/login`) ; pas de clé API.
 
 ## Mise en production
 
@@ -52,7 +52,7 @@ Le workflow `.github/workflows/veille.yml` ne se lance que par `workflow_dispatc
 
 ### 2. Secrets du dépôt
 
-Dépôt GitHub → *Settings* → *Secrets and variables* → *Actions* → *New repository secret* : créer `ANTHROPIC_API_KEY`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` et `MAIL_TO`.
+Dépôt GitHub → *Settings* → *Secrets and variables* → *Actions* → *New repository secret* : créer `CLAUDE_CODE_OAUTH_TOKEN` (valeur donnée par `claude setup-token`), `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` et `MAIL_TO`.
 
 ### 3. Jeton d'accès (PAT) pour cron-job.org
 

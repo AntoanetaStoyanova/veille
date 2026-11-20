@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
   GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
   GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
   MAIL_TO: ${{ secrets.MAIL_TO }}
@@ -25,6 +25,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: astral-sh/setup-uv@v6
+
+      - name: Installer la CLI Claude
+        run: npm install -g @anthropic-ai/claude-code
 
       - name: Installer les dépendances
         run: uv sync --frozen --no-dev

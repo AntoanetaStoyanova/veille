@@ -40,9 +40,18 @@ def test_workflow_lit_les_secrets_depuis_les_secrets_du_depot() -> None:
     env = _load()["env"]
 
     assert set(env) == {
-        "ANTHROPIC_API_KEY",
+        "CLAUDE_CODE_OAUTH_TOKEN",
         "GMAIL_ADDRESS",
         "GMAIL_APP_PASSWORD",
         "MAIL_TO",
     }
     assert all(v.startswith("${{ secrets.") for v in env.values())
+
+
+def test_workflow_installe_la_cli_claude_avant_de_lancer_la_veille() -> None:
+    runs = [s.get("run", "") for s in _load()["jobs"]["veille"]["steps"]]
+
+    install = next(i for i, r in enumerate(runs) if "@anthropic-ai/claude-code" in r)
+    launch = next(i for i, r in enumerate(runs) if "python -m veille" in r)
+
+    assert install < launch
