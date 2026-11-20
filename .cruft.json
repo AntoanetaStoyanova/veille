@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/AntoanetaStoyanova/python-project-template",
-  "commit": "612f699d0d41240b8717ca87534ec925e3a75d1d",
+  "commit": "da0ce4691c777dc8cb75f0c3ecc55460c97124e1",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -11,7 +11,7 @@
       "description": "Un pipeline Python déclenché chaque matin via cron-job.org et GitHub Actions, qui collecte des articles sur l'IA, dbt et Python, les résume et les explique en français avec Claude, puis les envoie dans un seul mail.",
       "python_version": "3.13",
       "_template": "https://github.com/AntoanetaStoyanova/python-project-template",
-      "_commit": "612f699d0d41240b8717ca87534ec925e3a75d1d"
+      "_commit": "da0ce4691c777dc8cb75f0c3ecc55460c97124e1"
     }
   },
   "directory": null
