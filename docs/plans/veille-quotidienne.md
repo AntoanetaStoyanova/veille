@@ -40,9 +40,9 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 4 — Notation LLM
 
-- [ ] `src/veille/bin/scoring.py` : `score_articles(articles, client)` envoie un lot unique à Haiku avec le profil d'intérêts, attend un JSON `{url: note}` ; `select_top(scored, n=8)` choisit les meilleurs et désigne l'item « à la une ».
-- [ ] Gestion d'une réponse JSON invalide : une erreur explicite (pas de repli silencieux).
-- [ ] Tests : client Anthropic factice, parsing de la réponse, JSON invalide → erreur, tri et sélection, « à la une » = meilleure note.
+- [x] `src/veille/bin/scoring.py` : `score_articles(articles, client)` envoie un lot unique à Haiku avec le profil d'intérêts, attend un JSON `{url: note}` ; `select_top(scored, n=8)` choisit les meilleurs et désigne l'item « à la une ».
+- [x] Gestion d'une réponse JSON invalide : une erreur explicite (pas de repli silencieux).
+- [x] Tests : client Anthropic factice, parsing de la réponse, JSON invalide → erreur, tri et sélection, « à la une » = meilleure note.
 
 ## Étape 5 — Résumé
 

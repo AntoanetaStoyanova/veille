@@ -27,13 +27,15 @@
 - Plan veille-quotidienne — Étape 2 : Collecte (`bin/collect.py` : `Article`, `fetch_articles(themes, now, parse)` ; `tests/test_collect.py`). Article sans date ou sans lien ignoré ; flux illisible = `bozo` sans entrée.
 - Plan veille-quotidienne — Étape 3 : Historique et pré-filtre (`data/seen.py`, `bin/prefilter.py`, `tests/test_seen.py`, `tests/test_prefilter.py`). Les clés de `seen.json` sont des URL normalisées (`normalize_url`) ; le filtre par mots-clés cherche aussi dans le nom de la source (titres de release sans sujet).
 
+- Plan veille-quotidienne — Étape 4 : Notation LLM (`bin/scoring.py` : `ScoredArticle`, `score_articles`, `select_top` ; `INTEREST_PROFILE` dans `config/settings.py` ; `tests/test_scoring.py`). JSON invalide, URL absente ou note hors 1-5 → `ValueError` ; `select_top` renvoie une liste dont le premier élément est l'item « à la une ». Tests : `MagicMock(spec=anthropic.Anthropic)` (beartype refuse un faux client non typé).
+
 ### Reste à faire
 
-- Exécuter `docs/plans/veille-quotidienne.md` — Étape 4 : Notation LLM (à l'étape 7, stocker `normalize_url(url)` dans `seen.json` ; `bin/pipeline.py` n'est qu'un `main()` provisoire, remplacé à l'étape 7).
+- Exécuter `docs/plans/veille-quotidienne.md` — Étape 5 : Résumé (à l'étape 7, stocker `normalize_url(url)` dans `seen.json` ; `bin/pipeline.py` n'est qu'un `main()` provisoire, remplacé à l'étape 7).
 - Avant l'étape 8 : créer la clé API Anthropic, le mot de passe d'application Gmail et le PAT fine-grained.
 
 ### Références
 
 - [Spec](../docs/specs/veille-quotidienne.md)
 - [Plan](../docs/plans/veille-quotidienne.md)
-- `src/veille/config/`, `src/veille/log/__init__.py`, `src/veille/bin/collect.py`, `src/veille/bin/prefilter.py`, `src/veille/data/seen.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`, `tests/test_collect.py`
+- `src/veille/config/`, `src/veille/log/__init__.py`, `src/veille/bin/collect.py`, `src/veille/bin/prefilter.py`, `src/veille/bin/scoring.py`, `src/veille/data/seen.py`, `tests/test_config_sources.py`, `tests/test_log_setup.py`, `tests/test_collect.py`
