@@ -13,13 +13,16 @@ def _envelope(result: str, is_error: bool = False) -> str:
 
 
 def _fake_run(
-    monkeypatch: pytest.MonkeyPatch, stdout: str = "", returncode: int = 0
+    monkeypatch: pytest.MonkeyPatch,
+    stdout: str = "",
+    returncode: int = 0,
+    stderr: str = "boom",
 ) -> list[dict[str, Any]]:
     calls: list[dict[str, Any]] = []
 
     def run(cmd: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
         calls.append({"cmd": cmd, **kwargs})
-        return subprocess.CompletedProcess(cmd, returncode, stdout, "boom")
+        return subprocess.CompletedProcess(cmd, returncode, stdout, stderr)
 
     monkeypatch.setattr(llm.subprocess, "run", run)
     return calls
@@ -107,4 +110,15 @@ def test_ask_json_cli_absente_ou_trop_lente_leve_une_erreur(
     monkeypatch.setattr(llm.subprocess, "run", run)
 
     with pytest.raises(RuntimeError, match=message):
+        ask_json("m", "p")
+
+
+def test_ask_json_echec_affiche_le_resultat_de_l_enveloppe(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _fake_run(
+        monkeypatch, _envelope("Not logged in", is_error=True), returncode=1, stderr=""
+    )
+
+    with pytest.raises(RuntimeError, match="Not logged in"):
         ask_json("m", "p")
