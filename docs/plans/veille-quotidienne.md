@@ -46,8 +46,8 @@ Pipeline Python complet (collecte → filtre → tri LLM → résumé → mail) 
 
 ## Étape 5 — Résumé
 
-- [ ] `src/veille/bin/summarize.py` : `summarize(articles, client)` appelle Sonnet, produit pour chaque item les blocs « Ce qui se passe », « Pourquoi c'est important », « Expliqué simplement » (≈ 100 mots, français, termes techniques anglais entre parenthèses) ; dataclass `Digest`.
-- [ ] Tests : client factice, structure de sortie complète pour chaque item, item manquant dans la réponse → erreur.
+- [x] `src/veille/bin/summarize.py` : `summarize(articles, client)` appelle Sonnet, produit pour chaque item les blocs « Ce qui se passe », « Pourquoi c'est important », « Expliqué simplement » (≈ 100 mots, français, termes techniques anglais entre parenthèses) ; dataclass `Digest`.
+- [x] Tests : client factice, structure de sortie complète pour chaque item, item manquant dans la réponse → erreur.
 
 ## Étape 6 — Mail
 

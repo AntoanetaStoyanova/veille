@@ -42,7 +42,10 @@ def test_normalize_url_ignore_casse_fragment_utm_et_slash_final() -> None:
 
 def test_drop_seen_exclut_une_url_deja_vue_meme_non_normalisee() -> None:
     seen = {"https://a.com/x": date(2026, 11, 1)}
-    articles = [_article("https://a.com/x/?utm_source=rss"), _article("https://a.com/y")]
+    articles = [
+        _article("https://a.com/x/?utm_source=rss"),
+        _article("https://a.com/y"),
+    ]
 
     assert [a.url for a in drop_seen(articles, seen)] == ["https://a.com/y"]
 

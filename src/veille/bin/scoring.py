@@ -1,12 +1,12 @@
 """Notation de la pertinence des articles par Claude Haiku."""
 
-import json
 from collections.abc import Sequence
 from dataclasses import dataclass
 
 import anthropic
 
 from veille.bin.collect import Article
+from veille.bin.llm import ask_json
 from veille.config.settings import INTEREST_PROFILE, MAX_ITEMS, MODEL_SCORING
 
 SCORING_MAX_TOKENS = 2000
@@ -73,19 +73,7 @@ def score_articles(
     if not articles:
         return []
 
-    response = client.messages.create(
-        model=MODEL_SCORING,
-        max_tokens=SCORING_MAX_TOKENS,
-        messages=[{"role": "user", "content": _build_prompt(articles)}],
-    )
-    text = "".join(b.text for b in response.content if b.type == "text")
-    try:
-        notes = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"Réponse de notation non JSON : {text[:200]!r}") from exc
-    if not isinstance(notes, dict):
-        raise ValueError(f"Réponse de notation inattendue : {text[:200]!r}")
-
+    notes = ask_json(client, MODEL_SCORING, SCORING_MAX_TOKENS, _build_prompt(articles))
     scored = []
     for article in articles:
         score = notes.get(article.url)

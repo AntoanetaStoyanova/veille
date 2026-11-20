@@ -1,11 +1,9 @@
 import json
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock
 
-import anthropic
 import pytest
-from anthropic.types import Message, TextBlock, Usage
 
+from tests.helpers import make_client
 from veille.bin.collect import Article
 from veille.bin.scoring import ScoredArticle, score_articles, select_top
 from veille.config.settings import MODEL_SCORING
@@ -24,25 +22,9 @@ def _article(n: int, age_hours: int = 0) -> Article:
     )
 
 
-def _client(reply: str) -> MagicMock:
-    message = Message(
-        id="msg_1",
-        content=[TextBlock(type="text", text=reply)],
-        model=MODEL_SCORING,
-        role="assistant",
-        stop_reason="end_turn",
-        stop_sequence=None,
-        type="message",
-        usage=Usage(input_tokens=1, output_tokens=1),
-    )
-    client = MagicMock(spec=anthropic.Anthropic)
-    client.messages.create.return_value = message
-    return client
-
-
 def test_score_articles_associe_chaque_note_a_son_article() -> None:
     articles = [_article(1), _article(2)]
-    client = _client(json.dumps({"https://a.com/1": 4, "https://a.com/2": 2}))
+    client = make_client(json.dumps({"https://a.com/1": 4, "https://a.com/2": 2}))
 
     scored = score_articles(articles, client)
 
@@ -53,7 +35,7 @@ def test_score_articles_associe_chaque_note_a_son_article() -> None:
 
 
 def test_score_articles_envoie_un_seul_appel_avec_tous_les_articles() -> None:
-    client = _client(json.dumps({"https://a.com/1": 3, "https://a.com/2": 3}))
+    client = make_client(json.dumps({"https://a.com/1": 3, "https://a.com/2": 3}))
 
     score_articles([_article(1), _article(2)], client)
 
@@ -65,7 +47,7 @@ def test_score_articles_envoie_un_seul_appel_avec_tous_les_articles() -> None:
 
 
 def test_score_articles_sans_candidat_n_appelle_pas_l_api() -> None:
-    client = _client("{}")
+    client = make_client("{}")
 
     assert score_articles([], client) == []
     client.messages.create.assert_not_called()
@@ -73,16 +55,16 @@ def test_score_articles_sans_candidat_n_appelle_pas_l_api() -> None:
 
 def test_score_articles_json_invalide_leve_une_erreur() -> None:
     with pytest.raises(ValueError, match="JSON"):
-        score_articles([_article(1)], _client("voici mes notes : 4"))
+        score_articles([_article(1)], make_client("voici mes notes : 4"))
 
 
 def test_score_articles_reponse_non_objet_leve_une_erreur() -> None:
     with pytest.raises(ValueError, match="inattendue"):
-        score_articles([_article(1)], _client("[4]"))
+        score_articles([_article(1)], make_client("[4]"))
 
 
 def test_score_articles_url_absente_leve_une_erreur() -> None:
-    client = _client(json.dumps({"https://a.com/1": 4}))
+    client = make_client(json.dumps({"https://a.com/1": 4}))
 
     with pytest.raises(ValueError, match="a.com/2"):
         score_articles([_article(1), _article(2)], client)
@@ -90,7 +72,7 @@ def test_score_articles_url_absente_leve_une_erreur() -> None:
 
 @pytest.mark.parametrize("note", [0, 6, 3.5, "4", True])
 def test_score_articles_note_invalide_leve_une_erreur(note: object) -> None:
-    client = _client(json.dumps({"https://a.com/1": note}))
+    client = make_client(json.dumps({"https://a.com/1": note}))
 
     with pytest.raises(ValueError, match="invalide"):
         score_articles([_article(1)], client)
