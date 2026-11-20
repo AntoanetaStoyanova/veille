@@ -1,3 +1,11 @@
-"""veille — Un pipeline Python déclenché chaque matin via cron-job.org et GitHub Actions, qui collecte des articles sur l'IA, dbt et Python, les résume et les explique en français avec Claude, puis les envoie dans un seul mail.."""
+"""Veille quotidienne : collecte, tri et résumé d'articles envoyés par mail."""
+
+from beartype.claw import beartype_this_package
+
+beartype_this_package()
+
+# Après beartype : le contrôle ne couvre que les modules importés ensuite.
+from veille.bin.pipeline import main  # noqa: E402
 
 __version__ = "0.1.0"
+__all__ = ["main"]

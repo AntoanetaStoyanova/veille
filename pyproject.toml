@@ -4,15 +4,23 @@ version = "0.1.0"
 description = "Un pipeline Python déclenché chaque matin via cron-job.org et GitHub Actions, qui collecte des articles sur l'IA, dbt et Python, les résume et les explique en français avec Claude, puis les envoie dans un seul mail."
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "anthropic>=2.11.0",
+    "beartype>=0.23.1",
+    "feedparser>=6.0.14",
+    "pyyaml>=6.0.3",
+]
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["src*"]
+where = ["src"]
+include = ["veille*"]
+
+[tool.setuptools.package-data]
+veille = ["config/sources.yml"]
 
 [tool.ruff]
 target-version = "py313"
@@ -69,4 +77,5 @@ dev = [
     "pytest-cov>=6.0.0",
     "sphinx>=7.0.0",
     "furo>=2024.1.0",
+    "types-pyyaml>=6.0.12.20261113",
 ]

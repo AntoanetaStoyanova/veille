@@ -1,10 +1,37 @@
+"""Configuration des logs (console et fichier)."""
+
 import logging
 import sys
 from datetime import datetime
 from pathlib import Path
 
 
-def setup_logging(project_name: str, log_dir: Path = Path("logs"), level: int = logging.INFO) -> logging.Logger:
+def setup_logging(
+    project_name: str,
+    log_dir: Path = Path("logs"),
+    level: int = logging.INFO,
+) -> logging.Logger:
+    """
+    Configure le logger du projet, sans doublon de handlers si déjà configuré.
+
+    Parameters
+    ----------
+    project_name : str
+        Nom du logger et préfixe du fichier de log.
+    log_dir : Path
+        Dossier des fichiers de log, créé si absent.
+    level : int
+        Niveau de log.
+
+    Returns
+    -------
+    logging.Logger
+        Logger du projet.
+    """
+    logger = logging.getLogger(project_name)
+    if logger.handlers:
+        return logger
+
     log_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -21,7 +48,6 @@ def setup_logging(project_name: str, log_dir: Path = Path("logs"), level: int = 
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
 
-    logger = logging.getLogger(project_name)
     logger.setLevel(level)
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
