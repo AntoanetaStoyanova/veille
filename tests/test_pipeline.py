@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import UTC, date, datetime
 from email.utils import format_datetime
@@ -6,11 +5,9 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
-import anthropic
 import feedparser
 import pytest
 
-from tests.helpers import make_message
 from veille.bin import pipeline
 from veille.bin.pipeline import main, run
 from veille.config.settings import MODEL_SCORING
@@ -43,13 +40,11 @@ def _parse_empty(url: str) -> Any:
     return feedparser.parse('<rss version="2.0"><channel></channel></rss>')
 
 
-def _client() -> MagicMock:
-    def create(*, model: str, **_: Any) -> Any:
-        return make_message(json.dumps(SCORES if model == MODEL_SCORING else SUMMARIES))
+def _llm() -> MagicMock:
+    def ask(model: str, prompt: str) -> dict[str, Any]:
+        return SCORES if model == MODEL_SCORING else SUMMARIES
 
-    client = MagicMock(spec=anthropic.Anthropic)
-    client.messages.create.side_effect = create
-    return client
+    return MagicMock(side_effect=ask)
 
 
 @pytest.fixture
@@ -61,7 +56,7 @@ def mail_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def _run(seen_path: Path, mailer: MagicMock, **kwargs: Any) -> None:
     run(
-        client=kwargs.pop("client", _client()),
+        llm=kwargs.pop("llm", _llm()),
         parse=kwargs.pop("parse", _parse),
         mailer=mailer,
         seen_path=seen_path,
@@ -122,12 +117,12 @@ def test_run_dry_run_affiche_le_mail_sans_rien_envoyer_ni_ecrire(
 
 @pytest.mark.usefixtures("mail_env")
 def test_run_sans_article_n_envoie_pas_de_mail(tmp_path: Path) -> None:
-    seen_path, mailer, client = tmp_path / "seen.json", MagicMock(), _client()
+    seen_path, mailer, llm = tmp_path / "seen.json", MagicMock(), _llm()
 
-    _run(seen_path, mailer, parse=_parse_empty, client=client)
+    _run(seen_path, mailer, parse=_parse_empty, llm=llm)
 
     mailer.assert_not_called()
-    client.messages.create.assert_not_called()
+    llm.assert_not_called()
     assert not seen_path.exists()
 
 
@@ -135,12 +130,12 @@ def test_run_variable_mail_manquante_echoue_avant_les_appels_claude(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.delenv("GMAIL_ADDRESS", raising=False)
-    client = _client()
+    llm = _llm()
 
     with pytest.raises(ValueError, match="GMAIL_ADDRESS"):
-        _run(tmp_path / "seen.json", MagicMock(), client=client)
+        _run(tmp_path / "seen.json", MagicMock(), llm=llm)
 
-    client.messages.create.assert_not_called()
+    llm.assert_not_called()
 
 
 @pytest.mark.parametrize(("argv", "expected"), [(["--dry-run"], True), ([], False)])

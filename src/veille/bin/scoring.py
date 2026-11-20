@@ -3,13 +3,10 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-import anthropic
-
 from veille.bin.collect import Article
-from veille.bin.llm import ask_json
+from veille.bin.llm import LLM
 from veille.config.settings import INTEREST_PROFILE, MAX_ITEMS, MODEL_SCORING
 
-SCORING_MAX_TOKENS = 2000
 PROMPT_EXCERPT_CHARS = 300
 
 
@@ -46,9 +43,7 @@ def _build_prompt(articles: Sequence[Article]) -> str:
     )
 
 
-def score_articles(
-    articles: Sequence[Article], client: anthropic.Anthropic
-) -> list[ScoredArticle]:
+def score_articles(articles: Sequence[Article], llm: LLM) -> list[ScoredArticle]:
     """
     Note tous les articles en un seul appel à Haiku.
 
@@ -56,8 +51,8 @@ def score_articles(
     ----------
     articles : Sequence[Article]
         Candidats à noter.
-    client : anthropic.Anthropic
-        Client de l'API Anthropic.
+    llm : LLM
+        Fonction d'appel au modèle (`veille.bin.llm.ask_json` en production).
 
     Returns
     -------
@@ -73,7 +68,7 @@ def score_articles(
     if not articles:
         return []
 
-    notes = ask_json(client, MODEL_SCORING, SCORING_MAX_TOKENS, _build_prompt(articles))
+    notes = llm(MODEL_SCORING, _build_prompt(articles))
     scored = []
     for article in articles:
         score = notes.get(article.url)
