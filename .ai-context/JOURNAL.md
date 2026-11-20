@@ -33,12 +33,13 @@
 - Plan llm-abonnement-claude (`docs/specs/llm-abonnement-claude.md`, `docs/plans/llm-abonnement-claude.md`, 3 étapes) créés : remplacer le client `anthropic` (clé API payante) par `claude -p` + token OAuth de l'abonnement. Décisions : injection d'un appelable `llm(modèle, prompt)`, aucun outil exposé à la CLI (texte RSS non fiable), `anthropic` retirée.
 - Plan llm-abonnement-claude — Étape 1 : Appel CLI et injection de `llm` (`bin/llm.py` : `LLM`, `ask_json(model, prompt)` via `claude -p --output-format json --tools ""`, prompt sur stdin, délai 600 s ; `scoring.py`, `summarize.py`, `pipeline.py` : `llm` à la place de `client` ; `anthropic` retirée de `pyproject.toml` et `uv.lock` ; `tests/helpers.py` : `make_llm` ; `tests/test_llm.py`). CLI absente, échec, `is_error` ou délai → `RuntimeError` ; réponse non JSON → `ValueError`. Format de sortie vérifié sur la CLI réelle (champs `is_error` et `result`).
 - Plan veille-quotidienne — Étape 8 (partielle) : `.github/workflows/veille.yml`, section « Mise en production » du `README.md`, `send_failure` dans `bin/mail.py` (mail d'erreur appelé par le step `if: failure()`), `tests/test_workflow.py`. Le workflow n'a pas pu être exécuté ici : il reste à valider sur GitHub.
+- Plan llm-abonnement-claude — Étape 2 : Workflow et documentation (`.github/workflows/veille.yml` : secret `CLAUDE_CODE_OAUTH_TOKEN` + step `npm install -g @anthropic-ai/claude-code` avant la veille ; `tests/test_workflow.py` : variables attendues + ordre d'installation ; `README.md` : variable, prérequis local, secrets).
 
 ### Reste à faire
 
-- Exécuter `docs/plans/llm-abonnement-claude.md` — Étape 2 : Workflow et documentation (le workflow, le README et `test_workflow.py` citent encore `ANTHROPIC_API_KEY`).
+- Exécuter `docs/plans/llm-abonnement-claude.md` — Étape 3 : validation réelle (manuelle) : `inv dry-run`, release, merge sur `main`, déclenchement du workflow.
 - Exécuter `docs/plans/veille-quotidienne.md` — Étape 8 : tâche manuelle restante, merge `develop` → `main` (Antoaneta), puis déclenchement manuel du workflow pour validation.
-- Avant le déclenchement : créer le secret `CLAUDE_CODE_OAUTH_TOKEN` (remplace la clé API Anthropic), le mot de passe d'application Gmail, les 4 secrets du dépôt et le PAT fine-grained (voir README).
+- Avant le déclenchement : vérifier les 4 secrets du dépôt (`CLAUDE_CODE_OAUTH_TOKEN`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`, `MAIL_TO`) et le PAT fine-grained (voir README).
 - Ensuite : cocher les « Critères de fin » du plan et de la spec, passer leur `statut` à `fait`.
 
 ### Références

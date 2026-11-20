@@ -45,7 +45,8 @@ def ask_json(model: str, prompt: str) -> dict[str, Any]:
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(f"CLI `claude` sans réponse après {TIMEOUT_S} s") from exc
     if proc.returncode != 0:
-        raise RuntimeError(f"CLI `claude` en échec : {proc.stderr[:200]!r}")
+        detail = proc.stderr.strip() or proc.stdout.strip()
+        raise RuntimeError(f"CLI `claude` en échec : {detail[:200]!r}")
 
     try:
         envelope = json.loads(proc.stdout)
