@@ -11,8 +11,16 @@
   "https://github.com/langchain-ai/langchain/releases/tag/langchain-core%3D%3D1.8.4": "2026-11-21",
   "https://github.com/langchain-ai/langchain/releases/tag/langchain-openai%3D%3D1.8.4": "2026-11-21",
   "https://github.com/langchain-ai/langchain/releases/tag/langchain-openai%3D%3D1.8.5": "2026-11-21",
+  "https://github.com/langchain-ai/langchain/releases/tag/langchain-openrouter%3D%3D0.3.0": "2026-11-22",
   "https://huggingface.co/blog/harness-adapters-at-scale": "2026-11-21",
+  "https://openai.com/index/combatting-adversarial-distillation": "2026-11-22",
   "https://realpython.com/agentic-loop": "2026-11-21",
+  "https://realpython.com/ai-benchmark-gemini-4-neon": "2026-11-22",
+  "https://realpython.com/ai-benchmark-hy4-flash": "2026-11-22",
+  "https://realpython.com/ai-benchmark-inkling-2-mini": "2026-11-22",
   "https://realpython.com/ai-news-weekly-2026-11-20": "2026-11-20",
-  "https://realpython.com/ai-refactor-python": "2026-11-20"
+  "https://realpython.com/ai-refactor-python": "2026-11-20",
+  "https://realpython.com/python-sqlite-sqlalchemy": "2026-11-22",
+  "https://signal.org/blog/protecting-your-privacy": "2026-11-22",
+  "https://www.pandex.io": "2026-11-22"
 }
